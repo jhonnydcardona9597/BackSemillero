@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using BackSemillero.Models;
+using Microsoft.EntityFrameworkCore;
 using TodoListApi.Models;
 
 namespace TodoListApi.Context
@@ -11,6 +12,7 @@ namespace TodoListApi.Context
         }
 
         public DbSet<TodoItem> TodoItems { get; set; } 
+        public DbSet<ProfesorModel> Profesores { get; set; }
 
     }
 }
