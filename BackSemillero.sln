@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35825.156
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackSemillero", "TodoListApi\BackSemillero.csproj", "{B03B6AE4-06E4-47D3-8988-6765076F8DB7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B03B6AE4-06E4-47D3-8988-6765076F8DB7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B03B6AE4-06E4-47D3-8988-6765076F8DB7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B03B6AE4-06E4-47D3-8988-6765076F8DB7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B03B6AE4-06E4-47D3-8988-6765076F8DB7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F7F80CC2-6CA3-4B65-8CCC-23CC630BBE1C}
+	EndGlobalSection
+EndGlobal

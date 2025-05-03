@@ -1,0 +1,16 @@
+﻿using Microsoft.EntityFrameworkCore;
+using TodoListApi.Models;
+
+namespace TodoListApi.Context
+{
+    public class AppDBContext: DbContext
+    {
+        public AppDBContext(DbContextOptions <AppDBContext> options) : base(options)
+        {
+
+        }
+
+        public DbSet<TodoItem> TodoItems { get; set; } 
+
+    }
+}
