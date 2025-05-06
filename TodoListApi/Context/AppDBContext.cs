@@ -13,6 +13,7 @@ namespace TodoListApi.Context
 
         public DbSet<TodoItem> TodoItems { get; set; } 
         public DbSet<ProfesorModel> Profesores { get; set; }
+        public DbSet<ProgramaModel> Programas { get; set; }
 
     }
 }
