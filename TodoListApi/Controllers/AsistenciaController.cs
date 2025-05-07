@@ -10,15 +10,18 @@ namespace BackSemillero.Controllers
     public class AsistenciaController : ControllerBase
     {
         private readonly IAsistenciaBusiness _business;
-        public AsistenciaController(IAsistenciaBusiness business) => _business = business;
+        public AsistenciaController(IAsistenciaBusiness business)
+        {
+            _business = business;
+        }
 
         // POST: AsistenciaController/RegistrarAsistencia
         [HttpPost(Name = "RegistrarAsistencia")]
         public async Task<ActionResult<AsistenciaResponse>> RegistrarAsistencia(AsistenciaModelRequest asistenciaModelRequest)
         {
-            var resp = await _business.RegistrarAsistencia(asistenciaModelRequest);
-            if (!resp.Registrada) return BadRequest(resp.Mensaje);
-            return Ok(resp);
+            var result = await _business.RegistrarAsistencia(asistenciaModelRequest);
+            if (!result.Registrada) return BadRequest(result.Mensaje);
+            return Ok(result);
         }
     }
 }
