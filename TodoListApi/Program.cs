@@ -30,6 +30,8 @@ builder.Services.AddScoped<IMongoDatabase>(sp => {
 
 builder.Services.AddScoped<IParametrizacionData, ParametrizacionData>();
 builder.Services.AddScoped<IParametrizacionBusiness, ParametrizacionBusiness>();
+builder.Services.AddScoped<IAsignaturaData, AsignaturaData>();
+builder.Services.AddScoped<IAsignaturaBusiness, AsignaturaBusiness>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
