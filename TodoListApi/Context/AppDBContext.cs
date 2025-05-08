@@ -11,8 +11,10 @@ namespace TodoListApi.Context
 
         }
 
-        public DbSet<TodoItem> TodoItems { get; set; } 
+        public DbSet<TodoItem> TodoItems { get; set; }
         public DbSet<ProfesorModel> Profesores { get; set; }
+        public DbSet<AsignaturaModelResponse> Asignaturas { get; set; }
+        public DbSet<EstudianteModel> Estudiantes { get; set; }
         public DbSet<ProgramaModel> Programas { get; set; }
 
     }
