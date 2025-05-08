@@ -2,10 +2,10 @@
 {
     public class ProgramaModel
     {
-        public int IdPrograma { get; set; }
-        public string NombrePrograma { get; set; }
+        public int idPrograma { get; set; }
+        public string ?nombrePrograma { get; set; }
 
-        public int IdCategoria { get; set; }
+        public int idCategoria { get; set; }
        
     }
 }

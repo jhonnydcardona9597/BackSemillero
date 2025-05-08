@@ -1,4 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using BackSemillero.Business;
+using BackSemillero.Business.Interfaces;
+using BackSemillero.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
+using TodoListApi.Models;
 
 namespace BackSemillero.Controllers
 {
@@ -6,10 +11,19 @@ namespace BackSemillero.Controllers
     [Route("[controller]")]
     public class ProgramaController : ControllerBase
     {
-        [HttpGet(Name = "GetPrograma")]
-        public void GetPrograma()
+        private readonly IProgramaBusiness _programaBusiness;
+
+        public ProgramaController(IProgramaBusiness programaBusiness)
         {
-            
+            _programaBusiness = programaBusiness;
         }
+
+
+        [HttpGet(Name = "GetPrograma")]
+        public async Task<ActionResult<List<ProgramaModel>>> GetPrograma()
+        {
+            return Ok(await _programaBusiness.ConsultarPrograma());
+        }
+
     }
 }

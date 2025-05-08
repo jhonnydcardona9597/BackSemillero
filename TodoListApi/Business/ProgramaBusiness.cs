@@ -1,18 +1,23 @@
 ﻿using BackSemillero.Business.Interfaces;
+using BackSemillero.Data.Interfaces;
 using BackSemillero.Models;
 
 namespace BackSemillero.Business
 {
     public class ProgramaBusiness: IProgramaBusiness
     {
-        public ProgramaBusiness()
-        {
 
+        private readonly IProgramaData _programaData;
+
+
+        public ProgramaBusiness(IProgramaData programaData)
+        {
+            _programaData = programaData;
         }
 
-        public List<ProgramaModel> ConsultarPrograma()
+        public async Task<List<ProgramaModel>> ConsultarPrograma()
         {
-            return new List<ProgramaModel>();
+            return await _programaData.ConsultarPrograma();
         }
     }
 }
