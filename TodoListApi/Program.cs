@@ -36,6 +36,8 @@ builder.Services.AddScoped<IAsistenciaData, AsistenciaData>();
 builder.Services.AddScoped<IAsistenciaBusiness, AsistenciaBusiness>();
 
 
+builder.Services.AddScoped<IAsignaturaData, AsignaturaData>();
+builder.Services.AddScoped<IAsignaturaBusiness, AsignaturaBusiness>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
