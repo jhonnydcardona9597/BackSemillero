@@ -28,7 +28,7 @@ namespace BackSemillero.Data
         {
             return _context.Profesores.FromSqlInterpolated($"select * from profesor WHERE idprofesor = '{Cedula}'").FirstOrDefault();
         }
-
+        
         public async Task<QrModelResponse> CrearRegistroQr(QrModelRequest qrModelRequest)
         {
             await _qrCollection.InsertOneAsync(qrModelRequest);

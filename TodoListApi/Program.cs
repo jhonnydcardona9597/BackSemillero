@@ -30,6 +30,12 @@ builder.Services.AddScoped<IMongoDatabase>(sp => {
 
 builder.Services.AddScoped<IParametrizacionData, ParametrizacionData>();
 builder.Services.AddScoped<IParametrizacionBusiness, ParametrizacionBusiness>();
+// Capa Data
+builder.Services.AddScoped<IEstudianteData, EstudianteData>();
+builder.Services.AddScoped<IAsistenciaData, AsistenciaData>();
+builder.Services.AddScoped<IAsistenciaBusiness, AsistenciaBusiness>();
+
+
 builder.Services.AddScoped<IAsignaturaData, AsignaturaData>();
 builder.Services.AddScoped<IAsignaturaBusiness, AsignaturaBusiness>();
 
