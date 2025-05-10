@@ -7,5 +7,6 @@ namespace BackSemillero.Data.Interfaces
     {
         Task<ProfesorModel> ConsultarProfesorXCedula(string Cedula);
         Task<QrModelResponse> CrearRegistroQr(QrModelMongo qrModelMongo);
+        Task<QrModelMongo> ObtenerQrPorId(string idQr);
     }
 }

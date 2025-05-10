@@ -37,5 +37,13 @@ namespace BackSemillero.Data
             await _qrCollection.InsertOneAsync(qrModelMongo);
             return new QrModelResponse{ IdQr = qrModelMongo.Id.ToString()};
         }
+
+        public async Task<QrModelMongo> ObtenerQrPorId(string idQr)
+        {
+            if (!ObjectId.TryParse(idQr, out var objectId))
+                return null;
+            var result = await _qrCollection.Find(q => q.Id == objectId).FirstOrDefaultAsync();
+            return result;
+        }
     }
 }
