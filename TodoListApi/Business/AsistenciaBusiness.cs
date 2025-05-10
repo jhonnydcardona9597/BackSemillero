@@ -1,7 +1,9 @@
-﻿using System.Threading.Tasks;
-using BackSemillero.Business.Interfaces;
+﻿using BackSemillero.Business.Interfaces;
 using BackSemillero.Data.Interfaces;
 using BackSemillero.Models;
+using BackSemillero.Models.Mongo;
+using System;
+using System.Threading.Tasks;
 
 namespace BackSemillero.Business
 {
@@ -10,19 +12,32 @@ namespace BackSemillero.Business
         private readonly IEstudianteData _estudianteData;
         private readonly IAsistenciaData _asistenciaData;
 
-        public AsistenciaBusiness(IEstudianteData estudianteData,IAsistenciaData asistenciaData)
+        public AsistenciaBusiness(
+            IEstudianteData estudianteData,
+            IAsistenciaData asistenciaData)
         {
             _estudianteData = estudianteData;
             _asistenciaData = asistenciaData;
         }
 
-        public async Task<AsistenciaResponse> RegistrarAsistencia(AsistenciaModelRequest asistenciaModelRequest)
+        public async Task<AsistenciaModelResponse> RegistrarAsistencia(AsistenciaModelRequest asistenciaModelRequest)
         {
-            var estudiante = await _estudianteData.ConsultarEstudianteXCedula(asistenciaModelRequest.Cedula);
-            if (estudiante is null || !estudiante.Activo)
-                return new AsistenciaResponse { Registrada = false, Mensaje = "Estudiante inactivo o no existe." };
+            // 1. Validar estudiante activo (ahora obtenemos lista)
+            var estudiantes = await _estudianteData.ConsultarEstudianteXCedula(asistenciaModelRequest.CedulaEstudiante!);
+            if (estudiantes == null)
+                throw new Exception("Estudiante no activo o no existe.");
 
-            return await _asistenciaData.CrearRegistroAsistencia(asistenciaModelRequest);
+            // 3. Crear registro de asistencia
+            var respuesta = await _asistenciaData.CrearRegistroAsistencia(new AsistenciaModelMongo
+            {
+                 CedulaEstudiante = asistenciaModelRequest.CedulaEstudiante,
+                 IdQr = asistenciaModelRequest.IdQr,
+                 Fecha = DateTime.Now
+            });
+            if (!respuesta.Exito)
+                throw new Exception("No se genero registro de asistencia");
+
+            return respuesta;
         }
     }
 }

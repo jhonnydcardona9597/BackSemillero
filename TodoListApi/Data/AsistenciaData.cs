@@ -1,28 +1,39 @@
-﻿using System.Threading.Tasks;
-using BackSemillero.Data.Interfaces;
+﻿using BackSemillero.Data.Interfaces;
 using BackSemillero.Models;
+using BackSemillero.Models.Mongo;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using MongoDB.Bson;
 using MongoDB.Driver;
+using System;
+using System.Threading.Tasks;
+using TodoListApi.Context;
 
 namespace BackSemillero.Data
 {
     public class AsistenciaData : IAsistenciaData
     {
-        private readonly IMongoCollection<AsistenciaModelRequest> _asistenciaCollection;
+        private readonly IMongoDatabase _database;
+        private readonly IMongoCollection<AsistenciaModelMongo> _asistenciaCollection;
 
-        public AsistenciaData(IMongoDatabase db, IOptions<MongoDBSettings> settings)
+        public AsistenciaData(IMongoDatabase mongoDatabase, IOptions<MongoDBSettings> settings)
         {
-            _asistenciaCollection = db.GetCollection<AsistenciaModelRequest>("asistencias");
+            _database = mongoDatabase;
+            _asistenciaCollection = _database.GetCollection<AsistenciaModelMongo>("Asistencia");
         }
 
-        public async Task<AsistenciaResponse> CrearRegistroAsistencia(AsistenciaModelRequest asistenciaModelRequest)
+        public async Task<AsistenciaModelResponse> CrearRegistroAsistencia(AsistenciaModelMongo asistenciaModelMongo)
         {
-            await _asistenciaCollection.InsertOneAsync(asistenciaModelRequest);
-            return new AsistenciaResponse
+
+            // 2) Insert en Mongo (colección Asistencias)
+           
+            await _asistenciaCollection.InsertOneAsync(asistenciaModelMongo);
+
+            // 3) Devuelves tu respuesta combinada
+ 
+            return new AsistenciaModelResponse
             {
-                Registrada = true,
-                Mensaje = "Asistencia guardada.",
-                AsistenciaGuardada = asistenciaModelRequest
+                Exito = true
             };
         }
     }

@@ -2,7 +2,6 @@
 {
     public class EstudianteModel
     {
-        public string Cedula { get; set; }
-        public bool Activo { get; set; }
+        public string Cedula { get; set; } = null!;
     }
 }

@@ -10,12 +10,12 @@ namespace BackSemillero.Data
         private readonly AppDBContext _context;
         public AsignaturaData(AppDBContext context)
         {
-            _context = context;    
+            _context = context;
         }
 
         public async Task<List<AsignaturaModelResponse>> ConsultaAsignaturasXPrograma(int IdPrograma)
         {
-                return await _context.Asignaturas.FromSqlInterpolated($"exec Consulta_Asignatura @id_Programa = {IdPrograma}").ToListAsync();
+            return await _context.Asignaturas.FromSqlInterpolated($"exec Consulta_Asignatura @id_Programa = {IdPrograma}").ToListAsync();
         }
     }
 }
