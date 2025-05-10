@@ -10,7 +10,18 @@ using TodoListApi.Context;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+//Configuracion del cors
+builder.Services.AddCors(options => {
+    options.AddPolicy("MyCORS", policy => {
+        policy.AllowAnyOrigin() // O elige origen específico
+             .AllowAnyMethod()
+             .AllowAnyHeader(); // O especifica encabezados específicos
+    });
+});
+
 // Add services to the container.
+
 
 var connetionString = builder.Configuration.GetConnectionString("Connection");
 builder.Services.AddDbContext<AppDBContext>(options => options.UseSqlServer(connetionString));
@@ -35,9 +46,11 @@ builder.Services.AddScoped<IEstudianteData, EstudianteData>();
 builder.Services.AddScoped<IAsistenciaData, AsistenciaData>();
 builder.Services.AddScoped<IAsistenciaBusiness, AsistenciaBusiness>();
 
-
 builder.Services.AddScoped<IAsignaturaData, AsignaturaData>();
 builder.Services.AddScoped<IAsignaturaBusiness, AsignaturaBusiness>();
+
+builder.Services.AddScoped<IProgramaData, ProgramaData>();
+builder.Services.AddScoped<IProgramaBusiness, ProgramaBusiness>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -52,6 +65,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseCors("MyCORS");
 
 app.UseHttpsRedirection();
 
