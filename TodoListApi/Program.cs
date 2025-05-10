@@ -10,7 +10,18 @@ using TodoListApi.Context;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+//Configuracion del cors
+builder.Services.AddCors(options => {
+    options.AddPolicy("MyCORS", policy => {
+        policy.AllowAnyOrigin() // O elige origen específico
+             .AllowAnyMethod()
+             .AllowAnyHeader(); // O especifica encabezados específicos
+    });
+});
+
 // Add services to the container.
+
 
 var connetionString = builder.Configuration.GetConnectionString("Connection");
 builder.Services.AddDbContext<AppDBContext>(options => options.UseSqlServer(connetionString));
