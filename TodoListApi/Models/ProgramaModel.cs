@@ -5,7 +5,7 @@
         public int idPrograma { get; set; }
         public string ?nombrePrograma { get; set; }
 
-        public int idCategoria { get; set; }
+        public int idCategoria_FK { get; set; }
        
     }
 }
