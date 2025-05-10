@@ -14,10 +14,6 @@ namespace BackSemillero.Business
             _programaData = programaData;
         }
 
-        //public async Task<List<ProgramaModel>> ConsultarPrograma()
-        //{
-        //    return await _programaData.ConsultarPrograma();
-        //}
         public async Task<List<ProgramaModel>> ConsultarPrograma()
         {
             List<ProgramaModel> programaModels = await _programaData.ConsultarPrograma();
