@@ -2,7 +2,6 @@
 {
     public class ProfesorModel
     {
-        public int IdProfesor { get; set; }
-        public string NombreProfesor { get; set; }
+        public string? CedulaProfesor { get; set; }
     }
 }

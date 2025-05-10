@@ -16,7 +16,7 @@ namespace BackSemillero.Business
         public async Task<List<AsignaturaModelResponse>> ConsultaAsignaturasXPrograma(int IdPrograma)
         {
             List<AsignaturaModelResponse> listAsignaturaModelResponse = await _asignaturaData.ConsultaAsignaturasXPrograma(IdPrograma);
-            if (listAsignaturaModelResponse != null)
+            if (listAsignaturaModelResponse.Count > 0)
             {
                 return listAsignaturaModelResponse;
             }

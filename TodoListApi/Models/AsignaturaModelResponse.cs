@@ -2,7 +2,7 @@
 {
     public class AsignaturaModelResponse
     {
-        public int IdAsignatura { get; set; }
-        public string Asignatura { get; set; }
+        public int idAsignatura { get; set; }
+        public string NombreAsignatura { get; set; }
     }
 }

@@ -15,7 +15,7 @@ namespace BackSemillero.Data
 
         public async Task<List<AsignaturaModelResponse>> ConsultaAsignaturasXPrograma(int IdPrograma)
         {
-            return _context.Asignaturas.FromSqlInterpolated($"select * from asignaturas WHERE idprograma = '{IdPrograma}'").ToList();
+                return await _context.Asignaturas.FromSqlInterpolated($"exec Consulta_Asignatura @id_Programa = {IdPrograma}").ToListAsync();
         }
     }
 }

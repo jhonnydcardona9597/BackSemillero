@@ -15,10 +15,30 @@ namespace BackSemillero.Controllers
         }
 
         // GET: AsignaturaController/ConsultarAsignaturasXPrograma
-        [HttpGet(Name = "ConsultarAsignaturasXPrograma")]
-        public async Task<ActionResult<AsignaturaModelResponse>> ConsultarAsignaturasXPrograma(int IdPrograma)
+        
+        [HttpGet]
+        [Route("ConsultarAsignaturasXPrograma")]
+        public async Task<ActionResult> ConsultarAsignaturasXPrograma(int IdPrograma)
         {
-            return Ok(await _asignaturaBusiness.ConsultaAsignaturasXPrograma(IdPrograma));
+            try
+            {
+                var result = await _asignaturaBusiness.ConsultaAsignaturasXPrograma(IdPrograma);
+                return Ok(new
+                {
+                    Code = 200,
+                    Message = "",
+                    Data = result
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Code = 400,
+                    Message = ex.Message,
+                    Data = Empty
+                });
+            }
         }
     }
 }

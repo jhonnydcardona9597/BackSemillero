@@ -18,12 +18,31 @@ namespace BackSemillero.Controllers
             _programaBusiness = programaBusiness;
         }
 
+        //Get Consulta programa
 
-        [HttpGet(Name = "GetPrograma")]
+        [HttpGet]
+        [Route("GetPrograma")]
         public async Task<ActionResult<List<ProgramaModel>>> GetPrograma()
         {
-            return Ok(await _programaBusiness.ConsultarPrograma());
+            try
+            {
+                var result = await _programaBusiness.ConsultarPrograma();
+                return Ok(new
+                {
+                    Code = 200,
+                    Message = "",
+                    Data = result
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Code = 400,
+                    Message = ex.Message,
+                    Data = Empty
+                });
+            }
         }
-
     }
 }
