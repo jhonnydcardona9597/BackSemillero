@@ -15,7 +15,7 @@ namespace BackSemillero.Data
 
         public async Task<List<ProgramaModel>> ConsultarPrograma()
         {
-            return _context.Programas.FromSqlInterpolated($"select * from programa").ToList();
+            return await _context.Programas.FromSqlInterpolated($"select * from programa").ToListAsync();
         }
     }
 }
