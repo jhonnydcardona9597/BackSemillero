@@ -15,7 +15,7 @@ namespace BackSemillero.Controllers
         }
 
         // GET: AsignaturaController/ConsultarAsignaturasXPrograma
-        
+
         [HttpGet]
         [Route("ConsultarAsignaturasXPrograma")]
         public async Task<ActionResult> ConsultarAsignaturasXPrograma(int IdPrograma)

@@ -1,27 +1,32 @@
-﻿using System.Threading.Tasks;
-using BackSemillero.Business.Interfaces;
+﻿using BackSemillero.Business.Interfaces;
 using BackSemillero.Models;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace BackSemillero.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/asistencia")]
     public class AsistenciaController : ControllerBase
     {
-        private readonly IAsistenciaBusiness _business;
-        public AsistenciaController(IAsistenciaBusiness business)
-        {
-            _business = business;
-        }
+        private readonly IAsistenciaBusiness _asistenciaBusiness;
 
-        // POST: AsistenciaController/RegistrarAsistencia
-        [HttpPost(Name = "RegistrarAsistencia")]
-        public async Task<ActionResult<AsistenciaResponse>> RegistrarAsistencia(AsistenciaModelRequest asistenciaModelRequest)
+        public AsistenciaController(IAsistenciaBusiness asistenciaBusiness)
+            => _asistenciaBusiness = asistenciaBusiness;
+
+        [HttpPost]
+        [Route("CreateAsistencia")]
+        public async Task<ActionResult> CreateAsistencia(AsistenciaModelRequest asistenciaModelRequest)
         {
-            var result = await _business.RegistrarAsistencia(asistenciaModelRequest);
-            if (!result.Registrada) return BadRequest(result.Mensaje);
-            return Ok(result);
+            try
+            {
+                var result = await _asistenciaBusiness.RegistrarAsistencia(asistenciaModelRequest);
+                return Ok(new { Code = 200, Message = "", Data = result });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Code = 400, Message = ex.Message, Data = string.Empty });
+            }
         }
     }
 }

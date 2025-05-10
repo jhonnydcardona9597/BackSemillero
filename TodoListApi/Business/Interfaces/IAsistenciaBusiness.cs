@@ -1,10 +1,10 @@
-﻿using System.Threading.Tasks;
-using BackSemillero.Models;
+﻿using BackSemillero.Models;
+using System.Threading.Tasks;
 
 namespace BackSemillero.Business.Interfaces
 {
     public interface IAsistenciaBusiness
     {
-        Task<AsistenciaResponse> RegistrarAsistencia(AsistenciaModelRequest asistenciaModelRequest);
+        Task<AsistenciaModelResponse> RegistrarAsistencia(AsistenciaModelRequest asistenciaModelRequest);
     }
 }
