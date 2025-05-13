@@ -8,9 +8,11 @@ namespace BackSemillero.Business
     public class ParametrizacionBusiness : IParametrizacionBusiness
     {
         private readonly IParametrizacionData _parametrizacionData;
-        public ParametrizacionBusiness(IParametrizacionData parametrizacionData)
+        private readonly IConfiguration _configuration;
+        public ParametrizacionBusiness(IParametrizacionData parametrizacionData, IConfiguration configuration)
         {
             _parametrizacionData = parametrizacionData;
+            _configuration = configuration;
         }
 
         public async Task<QrModelResponse> GenerarQr(QrModelRequest qrModelRequest)
@@ -18,13 +20,15 @@ namespace BackSemillero.Business
             ProfesorModel profesorModel = await _parametrizacionData.ConsultarProfesorXCedula(qrModelRequest.CedulaProfesor);
             if(profesorModel != null)
             {
-                return await _parametrizacionData.CrearRegistroQr(new QrModelMongo
+                var result = await _parametrizacionData.CrearRegistroQr(new QrModelMongo
                 {
                     CedulaProfesor = qrModelRequest.CedulaProfesor,
                     IdAsignatura = qrModelRequest.IdAsignatura,
                     IdPrograma =    qrModelRequest.IdPrograma,
                     FechaHoraQr = DateTime.Now
                 });
+                result.IdQr = _configuration.GetSection("UrlQr:Url").Value?.ToString()+result.IdQr;
+                return result;
             }
             else
             {
