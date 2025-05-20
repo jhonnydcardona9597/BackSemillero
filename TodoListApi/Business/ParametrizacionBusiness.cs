@@ -2,6 +2,7 @@
 using BackSemillero.Data.Interfaces;
 using BackSemillero.Models;
 using BackSemillero.Models.Mongo;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 
 namespace BackSemillero.Business
 {
@@ -32,7 +33,7 @@ namespace BackSemillero.Business
             }
             else
             {
-                throw new Exception("Error no existe el profesor");
+                throw new Exception("No existe el profesor", new Exception ("404"));
             }
         }
     }

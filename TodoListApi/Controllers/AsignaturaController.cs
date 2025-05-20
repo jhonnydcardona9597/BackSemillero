@@ -34,7 +34,7 @@ namespace BackSemillero.Controllers
             {
                 return BadRequest(new
                 {
-                    Code = 400,
+                    Code = ex.InnerException?.Message ?? "400",
                     Message = ex.Message,
                     Data = Empty
                 });
