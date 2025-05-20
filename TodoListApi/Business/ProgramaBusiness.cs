@@ -23,7 +23,7 @@ namespace BackSemillero.Business
             }
             else
             {
-                throw new Exception("No existen programas");
+                throw new Exception("No existen programas", new Exception("404"));
             }
         }
     }
