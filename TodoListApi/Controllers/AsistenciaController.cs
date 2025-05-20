@@ -25,7 +25,12 @@ namespace BackSemillero.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Code = 400, Message = ex.Message, Data = string.Empty });
+                return BadRequest(new
+                {
+                    Code = ex.InnerException?.Message ?? "400",
+                    Message = ex.Message,
+                    Data = string.Empty
+                });
             }
         }
     }

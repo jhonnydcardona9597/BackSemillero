@@ -28,13 +28,13 @@ namespace BackSemillero.Business
             // 1. Validar estudiante activo (ahora obtenemos lista)
             var estudiantes = await _estudianteData.ConsultarEstudianteXCedula(asistenciaModelRequest.CedulaEstudiante!);
             if (estudiantes == null)
-                throw new Exception("Estudiante no activo o no existe.");
+                throw new Exception("Estudiante no activo o no existe.", new Exception("404"));
 
             //_parametrizacionData.ObtenerQrPorId(asistenciaModelRequest.IdQr);
 
             var qrGenerado = await _parametrizacionData.ObtenerQrPorId(asistenciaModelRequest.IdQr);
             if (qrGenerado == null || qrGenerado.FechaHoraQr == null)
-                throw new Exception("QR no encontrado o no tiene fecha válida.");
+                throw new Exception("QR no encontrado o no tiene fecha válida.", new Exception("404"));
 
             // Convertimos a UTC por seguridad en la comparación
             var fechaQrUtc = qrGenerado.FechaHoraQr.Value.ToUniversalTime();
@@ -44,7 +44,7 @@ namespace BackSemillero.Business
             var diferenciaHoras = (fechaActualUtc - fechaQrUtc).TotalHours;
 
             if (diferenciaHoras > 2)
-                throw new Exception("El QR ha expirado. Solo es válido durante las 2 horas posteriores a su generación.");
+                throw new Exception("El QR ha expirado. Solo es válido durante las 2 horas posteriores a su generación.", new Exception("403"));
 
             // 3. Crear registro de asistencia
             var respuesta = await _asistenciaData.CrearRegistroAsistencia(new AsistenciaModelMongo
@@ -54,7 +54,7 @@ namespace BackSemillero.Business
                  Fecha = DateTime.Now
             });
             if (!respuesta.Exito)
-                throw new Exception("No se genero registro de asistencia");
+                throw new Exception("No se genero registro de asistencia", new Exception("400"));
 
             return respuesta;
 
