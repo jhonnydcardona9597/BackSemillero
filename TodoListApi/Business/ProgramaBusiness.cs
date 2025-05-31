@@ -23,7 +23,7 @@ namespace BackSemillero.Business
             }
             else
             {
-                throw new Exception("El recurso solicitado no está disponible o no existe. Verifica la URL o intenta buscar otra información.",new Exception("404")
+                throw new Exception("El recurso no existe o fue eliminado.",new Exception("404")
                 );
             }
         }

@@ -29,7 +29,7 @@ namespace BackSemillero.Business
             var estudiantes = await _estudianteData.ConsultarEstudianteXCedula(asistenciaModelRequest.CedulaEstudiante!);
             if (estudiantes == null)
                 throw new Exception(
-                    "El recurso solicitado no está disponible o no existe. Verifica la URL o intenta buscar otra información.",
+                    "El recurso no existe o fue eliminado.",
                     new Exception("404")
                 );
 
@@ -37,7 +37,7 @@ namespace BackSemillero.Business
             var qrGenerado = await _parametrizacionData.ObtenerQrPorId(asistenciaModelRequest.IdQr);
             if (qrGenerado == null || qrGenerado.FechaHoraQr == null)
                 throw new Exception(
-                    "El recurso solicitado no está disponible o no existe. Verifica la URL o intenta buscar otra información.",
+                    "El recurso no existe o fue eliminado.",
                     new Exception("404")
                 );
 
@@ -48,7 +48,7 @@ namespace BackSemillero.Business
 
             if (diferenciaHoras > 2)
                 throw new Exception(
-                    "No tienes permiso para acceder a este recurso. Si crees que es un error, contacta al administrador.",
+                    "Acceso denegado.",
                     new Exception("403")
                 );
 
@@ -63,7 +63,7 @@ namespace BackSemillero.Business
             // 400 - Solicitud incorrecta: error técnico al guardar
             if (!respuesta.Exito)
                 throw new Exception(
-                    "La solicitud no pudo ser procesada debido a un error en los datos enviados. Por favor, verifica la información e intenta nuevamente.",
+                    "Solicitud inválida. Verifica los campos.",
                     new Exception("400")
                 );
 
