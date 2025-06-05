@@ -1,49 +1,78 @@
 ﻿using BackSemillero.Data.Interfaces;
 using BackSemillero.Models;
-using BackSemillero.Models.Mongo;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using TodoListApi.Context;
+using Microsoft.Extensions.Options;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace BackSemillero.Data
 {
-    public class ParametrizacionData: IParametrizacionData
+    public class ParametrizacionData : IParametrizacionData
     {
-        private readonly AppDBContext _context;
-        private readonly MongoClient _client;
-        private readonly IMongoDatabase _database;
-        private readonly IOptions<MongoDBSettings> _settings;
-        private readonly IMongoCollection<QrModelMongo> _qrCollection;
-        public ParametrizacionData(AppDBContext context, MongoClient mongoClient, IMongoDatabase mongoDatabase, IOptions<MongoDBSettings> settings)
-        {
-            _context = context;
-            _settings = settings;
-            _client = mongoClient;
-            _database = mongoDatabase;
-            _qrCollection = _database.GetCollection<QrModelMongo>("QrGenerado");
+        private readonly IMongoCollection<EncuestaReponseModel> _encuestasCollection;
+        private readonly IMongoCollection<RankingModel> _rankingCollection;
 
+        public ParametrizacionData(IOptions<MongoDBSettings> settings, IMongoDatabase database)
+        {
+            _encuestasCollection = database.GetCollection<EncuestaReponseModel>("Encuestas");
+            _rankingCollection = database.GetCollection<RankingModel>("Ranking");
         }
 
-        public async Task<ProfesorModel> ConsultarProfesorXCedula(string Cedula)
+        /// <summary>
+        /// 1) Intenta traer encuestas en el día 'fechaBuscada'.
+        /// 2) Si no hay, usa Aggregate para encontrar la fecha anterior más cercana con encuestas.
+        /// 3) Retorna las encuestas de esa fecha (o lista vacía si no hay historial).
+        /// </summary>
+        public async Task<IEnumerable<EncuestaReponseModel>> ObtenerEncuestasPorFecha(DateTime fechaBuscada)
         {
-                var result = await _context.Profesores.FromSqlInterpolated($"exec Consulta_Profesor @Cedula_Docente = {Cedula}").ToListAsync();
-                return result.FirstOrDefault();            
-        }   
-        
-        public async Task<QrModelResponse> CrearRegistroQr(QrModelMongo qrModelMongo)
-        {
-            await _qrCollection.InsertOneAsync(qrModelMongo);
-            return new QrModelResponse{ IdQr = qrModelMongo.Id.ToString()};
+            // Normalizar fecha a medianoche
+            DateTime inicio = fechaBuscada.Date;
+            DateTime fin = inicio.AddDays(1);
+
+            // Filtrar por [inicio, fin)
+            var filtroDia = Builders<EncuestaReponseModel>.Filter.And(
+                Builders<EncuestaReponseModel>.Filter.Gte(e => e.FechaCreacion, inicio),
+                Builders<EncuestaReponseModel>.Filter.Lt(e => e.FechaCreacion, fin)
+            );
+
+            var encuestasDelDia = await _encuestasCollection.Find(filtroDia).ToListAsync();
+            if (encuestasDelDia.Count > 0)
+                return encuestasDelDia;
+
+            // Si no hay encuestas ese día, buscar fecha previa más cercana con encuestas
+            var pipeline = _encuestasCollection.Aggregate()
+                .Match(Builders<EncuestaReponseModel>.Filter.Lt(e => e.FechaCreacion, inicio))
+                .Project(e => new { SoloFecha = e.FechaCreacion.Date })
+                .Group(x => x.SoloFecha, g => new { Fecha = g.Key })
+                .SortByDescending(x => x.Fecha)
+                .Limit(1);
+
+            var resultFecha = await pipeline.ToListAsync();
+            if (resultFecha.Count == 0)
+                return Enumerable.Empty<EncuestaReponseModel>();
+
+            DateTime fechaMasCercana = resultFecha[0].Fecha;
+            DateTime inicioCercano = fechaMasCercana;
+            DateTime finCercano = inicioCercano.AddDays(1);
+
+            var filtroCercano = Builders<EncuestaReponseModel>.Filter.And(
+                Builders<EncuestaReponseModel>.Filter.Gte(e => e.FechaCreacion, inicioCercano),
+                Builders<EncuestaReponseModel>.Filter.Lt(e => e.FechaCreacion, finCercano)
+            );
+
+            return await _encuestasCollection.Find(filtroCercano).ToListAsync();
         }
 
-        public async Task<QrModelMongo> ObtenerQrPorId(string idQr)
+        /// <summary>
+        /// Retorna TODOS los RankingModel cuyo campo IdEncuesta sea igual al ObjectId dado.
+        /// </summary>
+        public async Task<IEnumerable<RankingModel>> ObtenerRankingsPorEncuesta(ObjectId idEncuesta)
         {
-            if (!ObjectId.TryParse(idQr, out var objectId))
-                return null;
-            var result = await _qrCollection.Find(q => q.Id == objectId).FirstOrDefaultAsync();
-            return result;
+            var filtro = Builders<RankingModel>.Filter.Eq(r => r.IdEncuesta, idEncuesta);
+            return await _rankingCollection.Find(filtro).ToListAsync();
         }
     }
 }

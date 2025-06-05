@@ -1,7 +1,8 @@
-﻿using BackSemillero.Business;
-using BackSemillero.Business.Interfaces;
+﻿using BackSemillero.Business.Interfaces;
 using BackSemillero.Models;
 using Microsoft.AspNetCore.Mvc;
+using System;
+using System.Threading.Tasks;
 
 namespace BackSemillero.Controllers
 {
@@ -10,24 +11,29 @@ namespace BackSemillero.Controllers
     public class ParametrizacionController : ControllerBase
     {
         private readonly IParametrizacionBusiness _parametrizacionBusiness;
+
         public ParametrizacionController(IParametrizacionBusiness parametrizacionBusiness)
         {
             _parametrizacionBusiness = parametrizacionBusiness;
         }
 
-        // POST: ParametrizacionController/CreateQR
-        [HttpPost]
-        [Route("CreateQR")]
-        public async Task<ActionResult> CreateQR(QrModelRequest qrModelRequest)
+        /// <summary>
+        /// GET /Parametrizacion/ConsultarDashboard
+        /// Parámetros opcionales en query string: 
+        ///   fecha , filtro (string).
+        /// </summary>
+        [HttpGet]
+        [Route("ConsultarDashboard")]
+        public async Task<ActionResult> ConsultarDashboardGet([FromQuery] DashboardRequest request)
         {
             try
             {
-                var result = await _parametrizacionBusiness.GenerarQr(qrModelRequest);
+                var resultado = await _parametrizacionBusiness.ObtenerEncuestasConRanking(request);
                 return Ok(new
                 {
                     Code = 200,
                     Message = "",
-                    Data = result
+                    Data = resultado
                 });
             }
             catch (Exception ex)
@@ -36,10 +42,42 @@ namespace BackSemillero.Controllers
                 {
                     Code = ex.InnerException?.Message ?? "400",
                     Message = ex.Message,
-                    Data = Empty
+                    Data = (object?)null
                 });
             }
         }
-        
+
+        /// <summary>
+        /// POST /Parametrizacion/ConsultarDashboard
+        /// Body (application/json):
+        /// {
+        ///   "fecha": "2025-06-05T00:00:00",
+        ///   "filtro": "SomeText"
+        /// }
+        /// </summary>
+        [HttpPost]
+        [Route("ConsultarDashboard")]
+        public async Task<ActionResult> ConsultarDashboardPost(DashboardRequest request)
+        {
+            try
+            {
+                var resultado = await _parametrizacionBusiness.ObtenerEncuestasConRanking(request);
+                return Ok(new
+                {
+                    Code = 200,
+                    Message = "",
+                    Data = resultado
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Code = ex.InnerException?.Message ?? "400",
+                    Message = ex.Message,
+                    Data = (object?)null
+                });
+            }
+        }
     }
 }

@@ -1,10 +1,11 @@
 ﻿using BackSemillero.Models;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace BackSemillero.Business.Interfaces
 {
     public interface IParametrizacionBusiness
     {
-        Task<QrModelResponse> GenerarQr(QrModelRequest qrModelRequest);
-        
+        Task<IEnumerable<EncuestaReponseModel>> ObtenerEncuestasConRanking(DashboardRequest filtros);
     }
 }
