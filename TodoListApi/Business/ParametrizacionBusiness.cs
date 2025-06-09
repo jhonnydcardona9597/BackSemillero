@@ -3,6 +3,7 @@ using BackSemillero.Data.Interfaces;
 using BackSemillero.Models;
 using BackSemillero.Models.Mongo;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
+using System.Security.Cryptography.Xml;
 
 namespace BackSemillero.Business
 {
@@ -18,23 +19,31 @@ namespace BackSemillero.Business
 
         public async Task<QrModelResponse> GenerarQr(QrModelRequest qrModelRequest)
         {
-            ProfesorModel profesorModel = await _parametrizacionData.ConsultarProfesorXCedula(qrModelRequest.CedulaProfesor);
-            if(profesorModel != null)
+            if (string.IsNullOrWhiteSpace(qrModelRequest.CedulaProfesor) ||
+                qrModelRequest.IdPrograma <= 0 ||
+                qrModelRequest.IdAsignatura <= 0 ||
+                await _parametrizacionData.ConsultarProfesorXCedula(qrModelRequest.CedulaProfesor) is null)
             {
-                var result = await _parametrizacionData.CrearRegistroQr(new QrModelMongo
-                {
-                    CedulaProfesor = qrModelRequest.CedulaProfesor,
-                    IdAsignatura = qrModelRequest.IdAsignatura,
-                    IdPrograma =    qrModelRequest.IdPrograma,
-                    FechaHoraQr = DateTime.Now
-                });
-                result.IdQr = _configuration.GetSection("UrlQr:Url").Value?.ToString()+result.IdQr;
-                return result;
+                throw new Exception(
+                    "El recurso no existe o fue eliminado.",
+                    new Exception("404")
+                );
             }
-            else
+
+            // Registro del QR
+            var result = await _parametrizacionData.CrearRegistroQr(new QrModelMongo
             {
-                throw new Exception("No existe el profesor", new Exception ("404"));
-            }
+                CedulaProfesor = qrModelRequest.CedulaProfesor,
+                IdAsignatura = qrModelRequest.IdAsignatura,
+                IdPrograma = qrModelRequest.IdPrograma,
+                FechaHoraQr = DateTime.Now
+            });
+
+            result.IdQr = _configuration.GetSection("UrlQr:Url").Value?.ToString() + result.IdQr;
+
+            return result;
         }
+
+
     }
 }
