@@ -9,16 +9,18 @@ namespace BackSemillero.Business
     public class ParametrizacionBusiness : IParametrizacionBusiness
     {
         private readonly IParametrizacionData _parametrizacionData;
+        private readonly IProfesorData _profesorData;
         private readonly IConfiguration _configuration;
-        public ParametrizacionBusiness(IParametrizacionData parametrizacionData, IConfiguration configuration)
+        public ParametrizacionBusiness(IParametrizacionData parametrizacionData, IConfiguration configuration, IProfesorData profesorData)
         {
             _parametrizacionData = parametrizacionData;
             _configuration = configuration;
+            _profesorData = profesorData;
         }
 
         public async Task<QrModelResponse> GenerarQr(QrModelRequest qrModelRequest)
         {
-            ProfesorModel profesorModel = await _parametrizacionData.ConsultarProfesorXCedula(qrModelRequest.CedulaProfesor);
+            ProfesorModel profesorModel = await _profesorData.ConsultarProfesorXCedula(qrModelRequest.CedulaProfesor);
             if(profesorModel != null)
             {
                 var result = await _parametrizacionData.CrearRegistroQr(new QrModelMongo
