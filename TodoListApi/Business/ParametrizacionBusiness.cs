@@ -33,12 +33,23 @@ namespace BackSemillero.Business
                 string textoFiltro = filtros.Filtro.Trim().ToLowerInvariant();
 
                 encuestasFiltradas = encuestasDelDia.Where(e =>
-                    (e.IdDocente?.ToLowerInvariant().Contains(textoFiltro) ?? false)
-                    || (e.IdPrograma?.ToLowerInvariant().Contains(textoFiltro) ?? false)
-                    || (e.IdAsignatura?.ToLowerInvariant().Contains(textoFiltro) ?? false)
-                    || (e.Jornada?.ToLowerInvariant().Contains(textoFiltro) ?? false)
-                    || (e.Categoria?.ToLowerInvariant().Contains(textoFiltro) ?? false)
-                );
+                        // Campos string de Encuesta
+                        (e.IdDocente?.ToLowerInvariant().Contains(textoFiltro) ?? false)
+                     || (e.IdPrograma?.ToLowerInvariant().Contains(textoFiltro) ?? false)
+                     || (e.IdAsignatura?.ToLowerInvariant().Contains(textoFiltro) ?? false)
+                     || (e.Jornada?.ToLowerInvariant().Contains(textoFiltro) ?? false)
+                     || (e.Categoria?.ToLowerInvariant().Contains(textoFiltro) ?? false)
+
+                     // Campos booleanos de Encuesta
+                     || e.FindeSemana.ToString().ToLowerInvariant().Contains(textoFiltro)
+                     || e.Virtual.ToString().ToLowerInvariant().Contains(textoFiltro)
+
+                     // Campos numéricos en cada ranking
+                     || e.rankingModels.Any(r => r.Puntaje.ToString().Contains(textoFiltro))
+                     || e.rankingModels.Any(r => r.Puesto.ToString().Contains(textoFiltro))
+                     || e.rankingModels.Any(r => r.PuntajeAnterior.ToString().Contains(textoFiltro))
+                     || e.rankingModels.Any(r => r.PuestoAnterior.ToString().Contains(textoFiltro))
+                    );
             }
 
             // 4) Para cada encuesta filtrada, cargamos sus rankings completos (sin filtrar más)
