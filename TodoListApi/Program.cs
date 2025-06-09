@@ -52,6 +52,9 @@ builder.Services.AddScoped<IAsignaturaBusiness, AsignaturaBusiness>();
 builder.Services.AddScoped<IProgramaData, ProgramaData>();
 builder.Services.AddScoped<IProgramaBusiness, ProgramaBusiness>();
 
+builder.Services.AddScoped<IProfesorData, ProfesorData>();
+builder.Services.AddScoped<IProfesorBusiness, ProfesorBusiness>();
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
