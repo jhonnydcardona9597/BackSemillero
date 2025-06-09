@@ -49,6 +49,9 @@ builder.Services.AddScoped<IAsistenciaBusiness, AsistenciaBusiness>();
 builder.Services.AddScoped<IAsignaturaData, AsignaturaData>();
 builder.Services.AddScoped<IAsignaturaBusiness, AsignaturaBusiness>();
 
+builder.Services.AddScoped<IEncuestaData, EncuestaData>();
+builder.Services.AddScoped<IEncuestaBusiness, EncuestaBusiness>();
+
 builder.Services.AddScoped<IProgramaData, ProgramaData>();
 builder.Services.AddScoped<IProgramaBusiness, ProgramaBusiness>();
 
