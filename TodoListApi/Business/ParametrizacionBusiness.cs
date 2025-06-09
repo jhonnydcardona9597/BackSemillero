@@ -24,7 +24,7 @@ namespace BackSemillero.Business
             if (string.IsNullOrWhiteSpace(qrModelRequest.CedulaProfesor) ||
                 qrModelRequest.IdPrograma <= 0 ||
                 qrModelRequest.IdAsignatura <= 0 ||
-                await _parametrizacionData.ConsultarProfesorXCedula(qrModelRequest.CedulaProfesor) is null)
+                await _profesorData.ConsultarProfesorXCedula(qrModelRequest.CedulaProfesor) is null)
             {
                 throw new Exception(
                     "El recurso no existe o fue eliminado.",
