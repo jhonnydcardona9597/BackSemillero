@@ -21,11 +21,21 @@ namespace BackSemillero.Controllers
             try
             {
                 var result = await _asistenciaBusiness.RegistrarAsistencia(asistenciaModelRequest);
-                return Ok(new { Code = 200, Message = "", Data = result });
+                return Ok(new
+                {
+                    Code = 200,
+                    Message = "",
+                    Data = result
+                });
             }
             catch (Exception ex)
             {
-                return BadRequest(new { Code = 400, Message = ex.Message, Data = string.Empty });
+                return BadRequest(new
+                {
+                    Code = ex.InnerException?.Message ?? "400",
+                    Message = ex.Message,
+                    Data = string.Empty
+                });
             }
         }
     }
