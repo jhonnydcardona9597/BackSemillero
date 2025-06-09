@@ -25,40 +25,50 @@ namespace BackSemillero.Business
 
         public async Task<AsistenciaModelResponse> RegistrarAsistencia(AsistenciaModelRequest asistenciaModelRequest)
         {
-            // 1. Validar estudiante activo (ahora obtenemos lista)
+            // 404 - No encontrado: estudiante no está en base de datos
             var estudiantes = await _estudianteData.ConsultarEstudianteXCedula(asistenciaModelRequest.CedulaEstudiante!);
             if (estudiantes == null)
-                throw new Exception("Estudiante no activo o no existe.", new Exception("404"));
+                throw new Exception(
+                    "El recurso no existe o fue eliminado.",
+                    new Exception("404")
+                );
 
-            //_parametrizacionData.ObtenerQrPorId(asistenciaModelRequest.IdQr);
-
+            // 404 - QR no encontrado
             var qrGenerado = await _parametrizacionData.ObtenerQrPorId(asistenciaModelRequest.IdQr);
             if (qrGenerado == null || qrGenerado.FechaHoraQr == null)
-                throw new Exception("QR no encontrado o no tiene fecha válida.", new Exception("404"));
+                throw new Exception(
+                    "El recurso no existe o fue eliminado.",
+                    new Exception("404")
+                );
 
-            // Convertimos a UTC por seguridad en la comparación
+            // 403 - Prohibido: QR vencido
             var fechaQrUtc = qrGenerado.FechaHoraQr.Value.ToUniversalTime();
             var fechaActualUtc = DateTime.UtcNow;
-
-            // Calculamos la diferencia en horas
             var diferenciaHoras = (fechaActualUtc - fechaQrUtc).TotalHours;
 
             if (diferenciaHoras > 2)
-                throw new Exception("El QR ha expirado. Solo es válido durante las 2 horas posteriores a su generación.", new Exception("403"));
+                throw new Exception(
+                    "Acceso denegado.",
+                    new Exception("403")
+                );
 
-            // 3. Crear registro de asistencia
+            // Crear registro de asistencia
             var respuesta = await _asistenciaData.CrearRegistroAsistencia(new AsistenciaModelMongo
             {
-                 CedulaEstudiante = asistenciaModelRequest.CedulaEstudiante,
-                 IdQr = asistenciaModelRequest.IdQr,
-                 Fecha = DateTime.Now
+                CedulaEstudiante = asistenciaModelRequest.CedulaEstudiante,
+                IdQr = asistenciaModelRequest.IdQr,
+                Fecha = DateTime.Now
             });
+
+            // 400 - Solicitud incorrecta: error técnico al guardar
             if (!respuesta.Exito)
-                throw new Exception("No se genero registro de asistencia", new Exception("400"));
+                throw new Exception(
+                    "Solicitud inválida. Verifica los campos.",
+                    new Exception("400")
+                );
 
             return respuesta;
-
-
         }
+
     }
 }

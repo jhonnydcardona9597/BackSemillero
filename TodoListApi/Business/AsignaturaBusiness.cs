@@ -22,7 +22,10 @@ namespace BackSemillero.Business
             }
             else
             {
-                throw new Exception("No hay asignaturas para ese programa", new Exception("404"));
+                throw new Exception(
+                    "El recurso no existe o fue eliminado.",
+                    new Exception("404")
+                );
             }
         }
     }
