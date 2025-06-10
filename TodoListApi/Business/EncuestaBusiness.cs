@@ -10,11 +10,11 @@ namespace BackSemillero.Business
 {
     public class EncuestaBusiness : IEncuestaBusiness
     {
-        private readonly IEncuestaData _parametrizacionData;
+        private readonly IEncuestaData _encuestaData;
 
-        public EncuestaBusiness(IEncuestaData parametrizacionData)
+        public EncuestaBusiness(IEncuestaData encuestaData)
         {
-            _parametrizacionData = parametrizacionData;
+            _encuestaData = encuestaData;
         }
 
         public async Task<IEnumerable<EncuestaModelResponse>> ObtenerEncuestasConRanking(DashboardRequest filtros)
@@ -23,7 +23,7 @@ namespace BackSemillero.Business
             DateTime fechaObjetivo = filtros.Fecha?.Date ?? DateTime.Now.Date;
 
             // 2) Traer encuestas de la fecha (o fecha anterior con datos)
-            var encuestasDelDia = await _parametrizacionData.ObtenerEncuestasPorFecha(fechaObjetivo);
+            var encuestasDelDia = await _encuestaData.ObtenerEncuestasPorFecha(fechaObjetivo);
 
             // 3) Si el usuario envió un filtro de texto, lo aplicamos (“Contains”):
             IEnumerable<EncuestaModelResponse> encuestasFiltradas = encuestasDelDia;
@@ -57,7 +57,7 @@ namespace BackSemillero.Business
             var listaFinal = new List<EncuestaModelResponse>();
             foreach (var encuesta in encuestasFiltradas)
             {
-                var todosLosRankings = await _parametrizacionData.ObtenerRankingsPorEncuesta(encuesta.Id);
+                var todosLosRankings = await _encuestaData.ObtenerRankingsPorEncuesta(encuesta.Id);
                 encuesta.rankingModels = todosLosRankings.ToList();
                 listaFinal.Add(encuesta);
             }

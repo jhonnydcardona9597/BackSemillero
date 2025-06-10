@@ -9,7 +9,6 @@ namespace BackSemillero.Data.Interfaces
     public interface IEncuestaData
     {
         Task<IEnumerable<EncuestaModelResponse>> ObtenerEncuestasPorFecha(DateTime fechaBuscada);
-
         Task<IEnumerable<RankingModel>> ObtenerRankingsPorEncuesta(ObjectId idEncuesta);
     }
 }

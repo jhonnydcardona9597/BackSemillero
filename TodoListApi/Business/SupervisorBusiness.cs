@@ -1,4 +1,5 @@
 ﻿using BackSemillero.Business.Interfaces;
+using BackSemillero.Data;
 using BackSemillero.Data.Interfaces;
 using BackSemillero.Models;
 using System;
@@ -9,11 +10,11 @@ namespace BackSemillero.Business
 {
     public class SupervisorBusiness : ISupervisorBusiness
     {
-        private readonly ISupervisorData _data;
+        private readonly ISupervisorData _supervisorData;
 
-        public SupervisorBusiness(ISupervisorData data)
+        public SupervisorBusiness(ISupervisorData supervisorData)
         {
-            _data = data;
+            _supervisorData = supervisorData;
         }
 
         public async Task<SupervisorModelResponse> ObtenerEstadoEnvio(DateTime fechaBuscada)
@@ -23,13 +24,13 @@ namespace BackSemillero.Business
             var fin = inicio.AddDays(1);
 
             // 2) Intentamos obtener envíos en [inicio, fin)
-            var enviosHoy = await _data.ObtenerEnviosPorRango(inicio, fin);
+            var enviosHoy = await _supervisorData.ObtenerEnviosPorRango(inicio, fin);
             var primeroHoy = enviosHoy.FirstOrDefault();
             if (primeroHoy != null)
                 return primeroHoy;
 
             // 3) Si no hay, buscamos la fecha anterior más cercana
-            var fechasAnteriores = (await _data.ObtenerFechasEnvioAnteriores(inicio)).ToList();
+            var fechasAnteriores = (await _supervisorData.ObtenerFechasEnvioAnteriores(inicio)).ToList();
             if (!fechasAnteriores.Any())
                 throw new Exception("No hay registros de envío en el historial", new Exception("404"));
 
@@ -38,7 +39,7 @@ namespace BackSemillero.Business
             fin = inicio.AddDays(1);
 
             // 4) Obtenemos el envío de esa fecha anterior
-            var enviosAnterior = await _data.ObtenerEnviosPorRango(inicio, fin);
+            var enviosAnterior = await _supervisorData.ObtenerEnviosPorRango(inicio, fin);
             var primeroAnt = enviosAnterior.FirstOrDefault();
             if (primeroAnt != null)
                 return primeroAnt;

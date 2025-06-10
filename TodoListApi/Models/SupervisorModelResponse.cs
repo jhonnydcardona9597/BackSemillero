@@ -8,7 +8,6 @@ namespace BackSemillero.Models
     {
         [BsonId]
         public ObjectId Id { get; set; }
-
         public DateTime FechaHoraEnvio { get; set; }
         public int CantidadCarrerasNotificadas { get; set; }
         public int CantidadEncuestasEnviadas { get; set; }

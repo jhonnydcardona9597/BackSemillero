@@ -1,4 +1,5 @@
-﻿using BackSemillero.Business.Interfaces;
+﻿using BackSemillero.Business;
+using BackSemillero.Business.Interfaces;
 using BackSemillero.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -10,11 +11,11 @@ namespace BackSemillero.Controllers
     [Route("[controller]")]
     public class SupervisorController : ControllerBase
     {
-        private readonly ISupervisorBusiness _business;
+        private readonly ISupervisorBusiness _supervisorBusiness;
 
-        public SupervisorController(ISupervisorBusiness business)
+        public SupervisorController(ISupervisorBusiness supervisorBusiness)
         {
-            _business = business;
+            _supervisorBusiness = supervisorBusiness;
         }
 
         // GET /Supervisor/EstadoEnvio?fechaBuscada=2025-06-05
@@ -24,8 +25,13 @@ namespace BackSemillero.Controllers
         {
             try
             {
-                var dto = await _business.ObtenerEstadoEnvio(fechaBuscada);
-                return Ok(new { Code = 200, Message = "", Data = dto });
+                var resultado = await _supervisorBusiness.ObtenerEstadoEnvio(fechaBuscada);
+                return Ok(new
+                { 
+                    Code = 200, 
+                    Message = "",
+                    Data = resultado
+                });
             }
             catch (Exception ex)
             {

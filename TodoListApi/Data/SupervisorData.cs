@@ -1,5 +1,7 @@
-﻿using BackSemillero.Data.Interfaces;
+﻿using BackSemillero.Data;
+using BackSemillero.Data.Interfaces;
 using BackSemillero.Models;
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
@@ -10,11 +12,11 @@ namespace BackSemillero.Data
 {
     public class SupervisorData : ISupervisorData
     {
-        private readonly IMongoCollection<SupervisorModelResponse> _supCollection;
+        private readonly IMongoCollection<SupervisorModelResponse> _supervisorCollection;
 
         public SupervisorData(IMongoDatabase database)
         {
-            _supCollection = database.GetCollection<SupervisorModelResponse>("EncuestasSup");
+            _supervisorCollection = database.GetCollection<SupervisorModelResponse>("EncuestasSup");
         }
 
         public async Task<IEnumerable<SupervisorModelResponse>> ObtenerEnviosPorRango(DateTime inicio, DateTime fin)
@@ -24,7 +26,7 @@ namespace BackSemillero.Data
                 Builders<SupervisorModelResponse>.Filter.Lt(x => x.FechaHoraEnvio, fin)
             );
 
-            return await _supCollection
+            return await _supervisorCollection
                           .Find(filter)
                           .SortByDescending(x => x.FechaHoraEnvio)
                           .ToListAsync();
@@ -36,7 +38,7 @@ namespace BackSemillero.Data
             var match = builder.Lt(x => x.FechaHoraEnvio, antesDe);
 
             // Agrupamos por la parte Date de FechaHoraEnvio
-            var result = await _supCollection.Aggregate()
+            var result = await _supervisorCollection.Aggregate()
                 .Match(match)
                 .Project(x => new { SoloFecha = x.FechaHoraEnvio.Date })
                 .Group(x => x.SoloFecha, g => new { Fecha = g.Key })

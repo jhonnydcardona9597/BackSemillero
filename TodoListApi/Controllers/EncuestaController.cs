@@ -10,58 +10,20 @@ namespace BackSemillero.Controllers
     [Route("[controller]")]
     public class EncuestaController : ControllerBase
     {
-        private readonly IEncuestaBusiness _parametrizacionBusiness;
+        private readonly IEncuestaBusiness _encuestaBusiness;
 
-        public EncuestaController(IEncuestaBusiness parametrizacionBusiness)
+        public EncuestaController(IEncuestaBusiness encuestaBusiness)
         {
-            _parametrizacionBusiness = parametrizacionBusiness;
+            _encuestaBusiness = encuestaBusiness;
         }
 
-        /// <summary>
-        /// GET /Parametrizacion/ConsultarDashboard
-        /// Parámetros opcionales en query string: 
-        ///   fecha , filtro (string).
-        /// </summary>
         [HttpGet]
         [Route("ConsultarDashboard")]
         public async Task<ActionResult> ConsultarDashboardGet([FromQuery] DashboardRequest request)
         {
             try
             {
-                var resultado = await _parametrizacionBusiness.ObtenerEncuestasConRanking(request);
-                return Ok(new
-                {
-                    Code = 200,
-                    Message = "",
-                    Data = resultado
-                });
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(new
-                {
-                    Code = ex.InnerException?.Message ?? "400",
-                    Message = ex.Message,
-                    Data = (object?)null
-                });
-            }
-        }
-
-        /// <summary>
-        /// POST /Parametrizacion/ConsultarDashboard
-        /// Body (application/json):
-        /// {
-        ///   "fecha": "2025-06-05T00:00:00",
-        ///   "filtro": "SomeText"
-        /// }
-        /// </summary>
-        [HttpPost]
-        [Route("ConsultarDashboard")]
-        public async Task<ActionResult> ConsultarDashboardPost(DashboardRequest request)
-        {
-            try
-            {
-                var resultado = await _parametrizacionBusiness.ObtenerEncuestasConRanking(request);
+                var resultado = await _encuestaBusiness.ObtenerEncuestasConRanking(request);
                 return Ok(new
                 {
                     Code = 200,
