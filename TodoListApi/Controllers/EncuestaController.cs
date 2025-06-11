@@ -1,7 +1,6 @@
 ﻿using BackSemillero.Business.Interfaces;
 using BackSemillero.Models;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Threading.Tasks;
 
 namespace BackSemillero.Controllers
@@ -16,20 +15,14 @@ namespace BackSemillero.Controllers
         {
             _encuestaBusiness = encuestaBusiness;
         }
-
         [HttpGet]
         [Route("ConsultarDashboard")]
-        public async Task<ActionResult> ConsultarDashboardGet([FromQuery] DashboardRequest request)
+        public async Task<IActionResult> ConsultarDashboard([FromQuery] DashboardRequest request)
         {
             try
             {
-                var resultado = await _encuestaBusiness.ObtenerEncuestasConRanking(request);
-                return Ok(new
-                {
-                    Code = 200,
-                    Message = "",
-                    Data = resultado
-                });
+                var data = await _encuestaBusiness.ObtenerEncuestas(request);
+                return Ok(new { Code = 200, Message = "", Data = data });
             }
             catch (Exception ex)
             {

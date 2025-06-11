@@ -1,23 +1,21 @@
-﻿using MongoDB.Bson;
+﻿using BackSemillero.Models;
 using MongoDB.Bson.Serialization.Attributes;
-using System.Collections.Generic;
+using MongoDB.Bson;
 
-namespace BackSemillero.Models
+public class EncuestaModelResponse
 {
-    public class EncuestaModelResponse
-    {
-        [BsonId]
-        public ObjectId Id { get; set; }
-        public string IdDocente { get; set; } = null!;
-        public string IdPrograma { get; set; } = null!; 
-        public string IdAsignatura { get; set; } = null!;
-        public string Jornada { get; set; } = null!;
-        public string Categoria { get; set; } = null!; 
-        public bool FindeSemana { get; set; }
-        public bool Virtual { get; set; }
-        public string? ObservacionMejora { get; set; }
-        public DateTime FechaCreacion { get; set; }
-        public DateTime FechaModificacion { get; set; }
-        public List<RankingModel> rankingModels { get; set; } = new(); 
-    }
+    [BsonId] public ObjectId Id { get; set; }
+
+    public int CantidadCarrerasNotificadas { get; set; }
+    public int CantidadEncuestas { get; set; }
+    public string EstadoEnvio { get; set; } = null!;
+
+    [BsonElement("HoraYFechaDeCreacion")]
+    public DateTime HoraYFechaDeCreacion { get; set; }
+
+    [BsonElement("HoraYFechaDeModificacion")]
+    public DateTime HoraYFechaDeModificacion { get; set; }
+
+    [BsonElement("Detalle_Encuestas")]
+    public List<DetalleEncuestaModel> Detalle_Encuestas { get; set; } = new();
 }

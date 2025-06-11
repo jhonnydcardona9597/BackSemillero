@@ -1,8 +1,8 @@
-﻿using BackSemillero.Data.Interfaces;
+﻿// Data/EncuestaData.cs
+using BackSemillero.Data.Interfaces;
 using BackSemillero.Models;
 using MongoDB.Bson;
 using MongoDB.Driver;
-using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,66 +13,61 @@ namespace BackSemillero.Data
     public class EncuestaData : IEncuestaData
     {
         private readonly IMongoCollection<EncuestaModelResponse> _encuestasCollection;
-        private readonly IMongoCollection<RankingModel> _rankingCollection;
+        private readonly IMongoCollection<ClasificacionModel> _clasificacionesCollection;
 
-        public EncuestaData(IOptions<MongoDBSettings> settings, IMongoDatabase database)
+        public EncuestaData(IMongoDatabase database)
         {
             _encuestasCollection = database.GetCollection<EncuestaModelResponse>("Encuestas");
-            _rankingCollection = database.GetCollection<RankingModel>("Ranking");
+            _clasificacionesCollection = database.GetCollection<ClasificacionModel>("Clasificación");
         }
 
-        /// <summary>
-        /// 1) Intenta traer encuestas en el día 'fechaBuscada'.
-        /// 2) Si no hay, usa Aggregate para encontrar la fecha anterior más cercana con encuestas.
-        /// 3) Retorna las encuestas de esa fecha (o lista vacía si no hay historial).
-        /// </summary>
-        public async Task<IEnumerable<EncuestaModelResponse>> ObtenerEncuestasPorFecha(DateTime fechaBuscada)
+        public async Task<IEnumerable<EncuestaModelResponse>> ObtenerEncuestas(DateTime fechaBuscada)
         {
-            // Normalizar fecha a medianoche
+            // 1) Normalizar fecha a medianoche
             DateTime inicio = fechaBuscada.Date;
             DateTime fin = inicio.AddDays(1);
 
-            // Filtrar por [inicio, fin)
-            var filtroDia = Builders<EncuestaModelResponse>.Filter.And(
-                Builders<EncuestaModelResponse>.Filter.Gte(e => e.FechaCreacion, inicio),
-                Builders<EncuestaModelResponse>.Filter.Lt(e => e.FechaCreacion, fin)
+            var bldr = Builders<EncuestaModelResponse>.Filter;
+            var filtroHoy = bldr.And(
+                bldr.Gte(e => e.HoraYFechaDeCreacion, inicio),
+                bldr.Lt(e => e.HoraYFechaDeCreacion, fin)
             );
 
-            var encuestasDelDia = await _encuestasCollection.Find(filtroDia).ToListAsync();
-            if (encuestasDelDia.Count > 0)
-                return encuestasDelDia;
+            // 2) Intentar traer encuestas de la fecha solicitada
+            var encs = await _encuestasCollection.Find(filtroHoy).ToListAsync();
+            if (encs.Any())
+                return encs;
 
-            // Si no hay encuestas ese día, buscar fecha previa más cercana con encuestas
+            // 3) Si no hay, buscar la fecha anterior más cercana
             var pipeline = _encuestasCollection.Aggregate()
-                .Match(Builders<EncuestaModelResponse>.Filter.Lt(e => e.FechaCreacion, inicio))
-                .Project(e => new { SoloFecha = e.FechaCreacion.Date })
+                .Match(bldr.Lt(e => e.HoraYFechaDeCreacion, inicio))
+                .Project(e => new { SoloFecha = e.HoraYFechaDeCreacion.Date })
                 .Group(x => x.SoloFecha, g => new { Fecha = g.Key })
                 .SortByDescending(x => x.Fecha)
                 .Limit(1);
 
-            var resultFecha = await pipeline.ToListAsync();
-            if (resultFecha.Count == 0)
+            var fechas = await pipeline.ToListAsync();
+            if (!fechas.Any())
                 return Enumerable.Empty<EncuestaModelResponse>();
 
-            DateTime fechaMasCercana = resultFecha[0].Fecha;
-            DateTime inicioCercano = fechaMasCercana;
-            DateTime finCercano = inicioCercano.AddDays(1);
+            // 4) Traer encuestas de esa fecha anterior
+            var fechaAnt = fechas[0].Fecha;
+            inicio = fechaAnt;
+            fin = inicio.AddDays(1);
 
-            var filtroCercano = Builders<EncuestaModelResponse>.Filter.And(
-                Builders<EncuestaModelResponse>.Filter.Gte(e => e.FechaCreacion, inicioCercano),
-                Builders<EncuestaModelResponse>.Filter.Lt(e => e.FechaCreacion, finCercano)
+            var filtroAnt = bldr.And(
+                bldr.Gte(e => e.HoraYFechaDeCreacion, inicio),
+                bldr.Lt(e => e.HoraYFechaDeCreacion, fin)
             );
 
-            return await _encuestasCollection.Find(filtroCercano).ToListAsync();
+            return await _encuestasCollection.Find(filtroAnt).ToListAsync();
         }
 
-        /// <summary>
-        /// Retorna TODOS los RankingModel cuyo campo IdEncuesta sea igual al ObjectId dado.
-        /// </summary>
-        public async Task<IEnumerable<RankingModel>> ObtenerRankingsPorEncuesta(ObjectId idEncuesta)
+        public async Task<ClasificacionModel?> ObtenerClasificacion(ObjectId idClasificacion)
         {
-            var filtro = Builders<RankingModel>.Filter.Eq(r => r.IdEncuesta, idEncuesta);
-            return await _rankingCollection.Find(filtro).ToListAsync();
+            return await _clasificacionesCollection
+                         .Find(c => c.Id == idClasificacion)
+                         .FirstOrDefaultAsync();
         }
     }
 }
