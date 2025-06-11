@@ -9,5 +9,6 @@ namespace BackSemillero.Data.Interfaces
     {
         Task<IEnumerable<SupervisorModelResponse>> ObtenerEnviosPorRango(DateTime inicio, DateTime fin);
         Task<IEnumerable<DateTime>> ObtenerFechasEnvioAnteriores(DateTime antesDe);
+        Task<IEnumerable<EncuestaModelResponse>> ObtenerTodasLasEncuestas();
     }
 }

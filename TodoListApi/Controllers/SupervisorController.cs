@@ -1,5 +1,4 @@
-﻿using BackSemillero.Business;
-using BackSemillero.Business.Interfaces;
+﻿using BackSemillero.Business.Interfaces;
 using BackSemillero.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -18,19 +17,45 @@ namespace BackSemillero.Controllers
             _supervisorBusiness = supervisorBusiness;
         }
 
-        // GET /Supervisor/EstadoEnvio?fechaBuscada=2025-06-05
+        // GET /Supervisor/DetalleEncuestas?fecha=2025-06-06
         [HttpGet]
-        [Route("EstadoEnvio")]
-        public async Task<IActionResult> EstadoEnvio([FromQuery] DateTime fechaBuscada)
+        [Route("DetalleEncuestas")]
+        public async Task<IActionResult> ConsultarDetalle([FromQuery] DateTime? fecha)
         {
             try
             {
-                var resultado = await _supervisorBusiness.ObtenerEstadoEnvio(fechaBuscada);
+                var data = await _supervisorBusiness.ObtenerDetalleEncuestas(fecha);
                 return Ok(new
-                { 
-                    Code = 200, 
-                    Message = "",
-                    Data = resultado
+                {
+                    Code = 200,
+                    Message = string.Empty,
+                    Data = data
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Code = ex.InnerException?.Message ?? "400",
+                    Message = ex.Message,
+                    Data = (object?)null
+                });
+            }
+        }
+
+        // GET /Supervisor/HistorialEncuestas
+        [HttpGet]
+        [Route("HistorialEncuestas")]
+        public async Task<IActionResult> ConsultarHistorial()
+        {
+            try
+            {
+                var data = await _supervisorBusiness.ObtenerHistorialEncuestas();
+                return Ok(new
+                {
+                    Code = 200,
+                    Message = string.Empty,
+                    Data = data
                 });
             }
             catch (Exception ex)

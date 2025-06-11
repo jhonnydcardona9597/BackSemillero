@@ -1,8 +1,8 @@
 ﻿using BackSemillero.Business.Interfaces;
-using BackSemillero.Data;
 using BackSemillero.Data.Interfaces;
 using BackSemillero.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -17,35 +17,65 @@ namespace BackSemillero.Business
             _supervisorData = supervisorData;
         }
 
-        public async Task<SupervisorModelResponse> ObtenerEstadoEnvio(DateTime fechaBuscada)
+        public async Task<IEnumerable<SupervisorDetalleModelResponse>> ObtenerDetalleEncuestas(DateTime? fecha)
         {
-            // 1) Normalizar fecha a medianoche
-            var inicio = fechaBuscada.Date;
-            var fin = inicio.AddDays(1);
+            var fechaObj = fecha?.Date ?? DateTime.Now.Date;
+            var encuestas = await _supervisorData.ObtenerTodasLasEncuestas();
 
-            // 2) Intentamos obtener envíos en [inicio, fin)
-            var enviosHoy = await _supervisorData.ObtenerEnviosPorRango(inicio, fin);
-            var primeroHoy = enviosHoy.FirstOrDefault();
-            if (primeroHoy != null)
-                return primeroHoy;
+            var encuestasFecha = encuestas
+                .Where(e => e.HoraYFechaDeCreacion.Date == fechaObj)
+                .ToList();
 
-            // 3) Si no hay, buscamos la fecha anterior más cercana
-            var fechasAnteriores = (await _supervisorData.ObtenerFechasEnvioAnteriores(inicio)).ToList();
-            if (!fechasAnteriores.Any())
-                throw new Exception("No hay registros de envío en el historial", new Exception("404"));
+            if (!encuestasFecha.Any())
+            {
+                var fechaAnterior = encuestas
+                    .Where(e => e.HoraYFechaDeCreacion.Date < fechaObj)
+                    .OrderByDescending(e => e.HoraYFechaDeCreacion)
+                    .FirstOrDefault();
 
-            var fechaAnterior = fechasAnteriores.First(); // ya están ordenadas desc.
-            inicio = fechaAnterior;
-            fin = inicio.AddDays(1);
+                if (fechaAnterior != null)
+                {
+                    encuestasFecha = encuestas
+                        .Where(e => e.HoraYFechaDeCreacion.Date == fechaAnterior.HoraYFechaDeCreacion.Date)
+                        .ToList();
+                }
+            }
 
-            // 4) Obtenemos el envío de esa fecha anterior
-            var enviosAnterior = await _supervisorData.ObtenerEnviosPorRango(inicio, fin);
-            var primeroAnt = enviosAnterior.FirstOrDefault();
-            if (primeroAnt != null)
-                return primeroAnt;
+            var lista = new List<SupervisorDetalleModelResponse>();
+            foreach (var encuesta in encuestasFecha)
+            {
+                foreach (var detalle in encuesta.Detalle_Encuestas)
+                {
+                    lista.Add(new SupervisorDetalleModelResponse
+                    {
+                        IdDocente = detalle.IdDocente,
+                        IdPrograma = detalle.IdPrograma,
+                        IdAsignatura = detalle.IdAsignatura,
+                        Jornada = detalle.Jornada,
+                        Categoria = detalle.Categoria,
+                        FindeSemana = detalle.FindeSemana,
+                        Virtual = detalle.Virtual,
+                        ObservacionesMejora = detalle.ObservacionesMejora,
+                        HoraYFechaCreacion = encuesta.HoraYFechaDeCreacion
+                    });
+                }
+            }
 
-            // Por seguridad, nunca deberíamos llegar aquí (porque sabemos que existía esa fecha)
-            throw new Exception("Error inesperado al recuperar estado de envío.");
+            return lista;
+        }
+
+        public async Task<IEnumerable<SupervisorModelResponse>> ObtenerHistorialEncuestas()
+        {
+            var encuestas = await _supervisorData.ObtenerTodasLasEncuestas();
+
+            return encuestas.Select(e => new SupervisorModelResponse
+            {
+                Id = e.Id,
+                FechaHoraEnvio = e.HoraYFechaDeCreacion,
+                CantidadCarrerasNotificadas = e.CantidadCarrerasNotificadas,
+                CantidadEncuestasEnviadas = e.CantidadEncuestas,
+                EstadoEnvio = e.EstadoEnvio
+            });
         }
     }
 }

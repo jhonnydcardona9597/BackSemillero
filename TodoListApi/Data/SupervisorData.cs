@@ -1,7 +1,5 @@
-﻿using BackSemillero.Data;
-using BackSemillero.Data.Interfaces;
+﻿using BackSemillero.Data.Interfaces;
 using BackSemillero.Models;
-using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
@@ -13,12 +11,14 @@ namespace BackSemillero.Data
     public class SupervisorData : ISupervisorData
     {
         private readonly IMongoCollection<SupervisorModelResponse> _supervisorCollection;
+        private readonly IMongoCollection<EncuestaModelResponse> _encuestasCollection;
 
         public SupervisorData(IMongoDatabase database)
         {
-            _supervisorCollection = database.GetCollection<SupervisorModelResponse>("EncuestasSup");
+            _encuestasCollection = database.GetCollection<EncuestaModelResponse>("Encuestas");
         }
 
+        // Ya existente: retorna envíos de supervisor en un rango de fechas
         public async Task<IEnumerable<SupervisorModelResponse>> ObtenerEnviosPorRango(DateTime inicio, DateTime fin)
         {
             var filter = Builders<SupervisorModelResponse>.Filter.And(
@@ -32,12 +32,12 @@ namespace BackSemillero.Data
                           .ToListAsync();
         }
 
+        // Ya existente: retorna fechas anteriores disponibles
         public async Task<IEnumerable<DateTime>> ObtenerFechasEnvioAnteriores(DateTime antesDe)
         {
             var builder = Builders<SupervisorModelResponse>.Filter;
             var match = builder.Lt(x => x.FechaHoraEnvio, antesDe);
 
-            // Agrupamos por la parte Date de FechaHoraEnvio
             var result = await _supervisorCollection.Aggregate()
                 .Match(match)
                 .Project(x => new { SoloFecha = x.FechaHoraEnvio.Date })
@@ -46,6 +46,15 @@ namespace BackSemillero.Data
                 .ToListAsync();
 
             return result.Select(x => x.Fecha);
+        }
+
+        //Nuevo método: retorna TODAS las encuestas completas desde la colección correcta
+        public async Task<IEnumerable<EncuestaModelResponse>> ObtenerTodasLasEncuestas()
+        {
+            return await _encuestasCollection
+                .Find(FilterDefinition<EncuestaModelResponse>.Empty)
+                .SortByDescending(e => e.HoraYFechaDeCreacion)
+                .ToListAsync();
         }
     }
 }
