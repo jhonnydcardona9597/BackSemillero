@@ -3,16 +3,19 @@ using BackSemillero.Data.Interfaces;
 using BackSemillero.Models.Mongo;
 using BackSemillero.Models;
 using Microsoft.Extensions.Configuration;
+using BackSemillero.Data;
 
 namespace BackSemillero.Business
 {
     public class ProfesorBusiness : IProfesorBusiness
     {
         private readonly IProfesorData _profesorData;
+        private readonly IEncuestaData _encuestaData;
 
-        public ProfesorBusiness(IProfesorData profesorData, IConfiguration configuration)
+        public ProfesorBusiness(IProfesorData profesorData, IEncuestaData encuestaData)
         {
             _profesorData = profesorData;
+            _encuestaData = encuestaData;
         }
 
         public async Task<ProfesorModel> ConsultarProfesor(string CedulaProfesor)
@@ -28,79 +31,44 @@ namespace BackSemillero.Business
             }
         }
 
-        public async Task<List<ProfesorModelResponse>> ConsultarDetalleProfesor(string CedulaProfesor)
+        public async Task<List<ClasificacionProfesorModel>> ConsultarDetalleProfesor(string CedulaProfesor)
         {
-            //Hago la consulta por fecha y docente
-            string IdClasificacion = "";
-            //var consulta = "";
-            //foreach (var item in consulta.docentes)
-            //{
-            //    IdClasificacion = item.IdClasificacion;
+            var Encuesta = await _encuestaData.ObtenerEncuestas(DateTime.Now.Date);
 
-            //    if (IdClasificacion != null)
-            //    {
-            //        var result = await _profesorData.ObtenerClasificacion(IdClasificacion);
-            //        //return result;
-            //        return new List<ProfesorModelResponse>
-            //    {
-            //        new ProfesorModelResponse
-            //        {
-            //            Id = "1",
-            //            EncuestaId = "123",
-            //            Puntaje = "10",
-            //            Puesto = "1",
-            //            TipsMejora = "mejorar",
-            //            Fortalezas = "fortalecer",
-            //            FechaHoraCreacion = "hoy"
-            //        },
-            //        new ProfesorModelResponse
-            //        {
-            //            Id = "2",
-            //            EncuestaId = "456",
-            //            Puntaje = "8",
-            //            Puesto = "3",
-            //            TipsMejora = "mejorar",
-            //            Fortalezas = "fortalecer",
-            //            FechaHoraCreacion = "ayer"
-            //        }
+            var EncuestaFiltrada = Encuesta.Where(e =>
+                    e.Detalle_Encuestas.Any(d =>
+                        (d.IdDocente?.ToLowerInvariant().Contains(CedulaProfesor.ToLowerInvariant().Trim()) ?? false)
+                    )
+                ).ToList();
 
-            //    };
-            //    }
-            //}
-            //fin
 
-            if (IdClasificacion != null)
+            if (EncuestaFiltrada.Count() != 0)
             {
-                var result = await _profesorData.ObtenerClasificacion(IdClasificacion);
-                //return result;
-                return new List<ProfesorModelResponse>
+                var lista = new List<ClasificacionProfesorModel>();
+                foreach (var encuesta in EncuestaFiltrada)
                 {
-                    new ProfesorModelResponse
+                    foreach (var detalle in encuesta.Detalle_Encuestas)
                     {
-                        Id = "1",
-                        EncuestaId = "123",
-                        Puntaje = "10",
-                        Puesto = "1",
-                        TipsMejora = "mejorar",
-                        Fortalezas = "fortalecer",
-                        FechaHoraCreacion = "hoy"
-                    },
-                    new ProfesorModelResponse
-                    {
-                        Id = "2",
-                        EncuestaId = "456",
-                        Puntaje = "8",
-                        Puesto = "3",
-                        TipsMejora = "mejorar",
-                        Fortalezas = "fortalecer",
-                        FechaHoraCreacion = "ayer"
-                    }
+                        detalle.Clasificacion =
+                        await _encuestaData.ObtenerClasificacion(detalle.IdClasificacion);
 
-                };
+                        lista.Add(new ClasificacionProfesorModel
+                        {
+                            Asignatura = detalle.IdAsignatura,
+                            Fortalezas = detalle.Clasificacion?.Fortalezas,
+                            TipsMejora = detalle.Clasificacion?.Tips_mejora,
+                            Puntaje = detalle.Clasificacion?.Puntaje,
+                            Puesto = detalle.Clasificacion?.Puesto,
+                            FechaCreacion = encuesta.HoraYFechaDeCreacion
+                        });
+                    }
+                }
+
+                return lista;
             }
             else
             {
-                throw new Exception("No existe la encuesta", new Exception("404"));
+                throw new Exception("No existen clasificaciones para esa cedula", new Exception("404"));
             }
         }
     }

@@ -40,9 +40,9 @@ namespace BackSemillero.Business
                         d.FindeSemana.ToString().ToLowerInvariant().Contains(tf) ||
                         d.Virtual.ToString().ToLowerInvariant().Contains(tf) ||
                         (d.Clasificacion?.Puntaje.ToString().Contains(tf) ?? false) ||
-                        (d.Clasificacion?.PuntajeAnterior.ToString().Contains(tf) ?? false) ||
+                        //(d.Clasificacion?.PuntajeAnterior.ToString().Contains(tf) ?? false) ||
                         (d.Clasificacion?.Puesto.ToString().Contains(tf) ?? false) ||
-                        (d.Clasificacion?.PuestoAnterior.ToString().Contains(tf) ?? false) ||
+                        //(d.Clasificacion?.PuestoAnterior.ToString().Contains(tf) ?? false) ||
                         e.HoraYFechaDeCreacion.ToString("O").Contains(tf)
                     )
                 ).ToList();

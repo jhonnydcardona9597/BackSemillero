@@ -8,12 +8,12 @@ namespace BackSemillero.Models
     {
         [BsonId]
         public ObjectId Id { get; set; }
-        public ObjectId IdDetalle { get; set; }    
-        public int Puntaje { get; set; }
-        public int PuntajeAnterior { get; set; }
-        public int Puesto { get; set; }
-        public int PuestoAnterior { get; set; }
-        public DateTime FechaCreacion { get; set; }
-        public DateTime FechaModificacion { get; set; }
+        public ObjectId Encuesta { get; set; }    
+        public Double? Puntaje { get; set; }
+        public Int32? Puesto { get; set; }
+        public string? Tips_mejora { get; set; }
+        public DateTime HoraYFechaDeCreacion { get; set; }
+        public DateTime HoraYFechaDeModificacion { get; set; }
+        public string? Fortalezas { get; set; }
     }
 }
