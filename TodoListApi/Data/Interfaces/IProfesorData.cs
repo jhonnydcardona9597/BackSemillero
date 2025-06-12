@@ -6,6 +6,6 @@ namespace BackSemillero.Data.Interfaces
     public interface IProfesorData
     {
         Task<ProfesorModel> ConsultarProfesorXCedula(string Cedula);
-        Task<RankingModelMongo> ObtenerDetalleProfesor(string IdEncuesta);
+        Task<ClasificacionModelMongo> ObtenerClasificacion(string IdClasificacion);
     }
 }

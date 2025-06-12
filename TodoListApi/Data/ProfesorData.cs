@@ -15,14 +15,14 @@ namespace BackSemillero.Data
         private readonly MongoClient _client;
         private readonly IMongoDatabase _database;
         private readonly IOptions<MongoDBSettings> _settings;
-        private readonly IMongoCollection<RankingModelMongo> _qrCollection;
+        //private readonly IMongoCollection<ClasificacionModelMongo> _qrCollection;
         public ProfesorData(AppDBContext context, MongoClient mongoClient, IMongoDatabase mongoDatabase, IOptions<MongoDBSettings> settings)
         {
             _context = context;
             _settings = settings;
             _client = mongoClient;
             _database = mongoDatabase;
-            _qrCollection = _database.GetCollection<RankingModelMongo>("Ranking");
+            //_qrCollection = _database.GetCollection<ClasificacionModelMongo>("Clasificacion");
         }
 
         public async Task<ProfesorModel> ConsultarProfesorXCedula(string Cedula)
@@ -31,10 +31,13 @@ namespace BackSemillero.Data
             return result.FirstOrDefault();
         }
 
-        public async Task<RankingModelMongo> ObtenerDetalleProfesor(string IdEncuesta)
-        {
-            var result = await _qrCollection.Find(q => q.EncuestaId == IdEncuesta).FirstOrDefaultAsync();
-            return result;
-        }
+        //public async Task<ClasificacionModelMongo> ObtenerClasificacion(string IdClasificacion)
+        //{
+        //    if (!ObjectId.TryParse(IdClasificacion, out var objectId))
+        //        return null;
+        //    var result = await _qrCollection.Find(q => q.Id == objectId).FirstOrDefaultAsync();
+        //    return result;
+        //}
     }
 }
+

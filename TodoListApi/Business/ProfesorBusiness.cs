@@ -17,21 +17,10 @@ namespace BackSemillero.Business
 
         public async Task<ProfesorModel> ConsultarProfesor(string CedulaProfesor)
         {
-            //ProfesorModel profesorModel = await _profesorData.ConsultarProfesorXCedula(CedulaProfesor);
-            ProfesorModel profesorModel = new ProfesorModel();
+            ProfesorModel profesorModel = await _profesorData.ConsultarProfesorXCedula(CedulaProfesor);
             if (profesorModel != null)
             {
-                //return profesorModel;
-                return new ProfesorModel
-                {
-                    CedulaProfesor = "1",
-                    NombreProfesor = "qwe",
-                    ApellidoProfesor = "asd",
-                    TelefonoProfesor = "123",
-                    CorreoProfesor = "123@gml.com",
-                    EstadoProfesor = "1",
-                    Habilidades = "Habilitar"
-                };
+                return profesorModel;
             }
             else
             {
@@ -41,10 +30,48 @@ namespace BackSemillero.Business
 
         public async Task<List<ProfesorModelResponse>> ConsultarDetalleProfesor(string CedulaProfesor)
         {
-            string IdEncuesta = "";
-            if (IdEncuesta != null)
+            //Hago la consulta por fecha y docente
+            string IdClasificacion = "";
+            //var consulta = "";
+            //foreach (var item in consulta.docentes)
+            //{
+            //    IdClasificacion = item.IdClasificacion;
+
+            //    if (IdClasificacion != null)
+            //    {
+            //        var result = await _profesorData.ObtenerClasificacion(IdClasificacion);
+            //        //return result;
+            //        return new List<ProfesorModelResponse>
+            //    {
+            //        new ProfesorModelResponse
+            //        {
+            //            Id = "1",
+            //            EncuestaId = "123",
+            //            Puntaje = "10",
+            //            Puesto = "1",
+            //            TipsMejora = "mejorar",
+            //            Fortalezas = "fortalecer",
+            //            FechaHoraCreacion = "hoy"
+            //        },
+            //        new ProfesorModelResponse
+            //        {
+            //            Id = "2",
+            //            EncuestaId = "456",
+            //            Puntaje = "8",
+            //            Puesto = "3",
+            //            TipsMejora = "mejorar",
+            //            Fortalezas = "fortalecer",
+            //            FechaHoraCreacion = "ayer"
+            //        }
+
+            //    };
+            //    }
+            //}
+            //fin
+
+            if (IdClasificacion != null)
             {
-                var result = await _profesorData.ObtenerDetalleProfesor(IdEncuesta);
+                var result = await _profesorData.ObtenerClasificacion(IdClasificacion);
                 //return result;
                 return new List<ProfesorModelResponse>
                 {

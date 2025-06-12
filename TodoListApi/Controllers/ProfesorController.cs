@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BackSemillero.Controllers
 {
+    [ApiController]
+    [Route("[controller]")]
     public class ProfesorController: ControllerBase
     {
         private readonly IProfesorBusiness _profesorBusiness;
