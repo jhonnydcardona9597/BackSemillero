@@ -52,7 +52,7 @@ builder.Services.AddScoped<IAsignaturaBusiness, AsignaturaBusiness>();
 builder.Services.AddScoped<IEncuestaData, EncuestaData>();
 builder.Services.AddScoped<IEncuestaBusiness, EncuestaBusiness>();
 
-builder.Services.AddScoped<ISupervisorData, SupervisorData>();
+//builder.Services.AddScoped<ISupervisorData, SupervisorData>();
 builder.Services.AddScoped<ISupervisorBusiness, SupervisorBusiness>();
 
 builder.Services.AddScoped<IProgramaData, ProgramaData>();

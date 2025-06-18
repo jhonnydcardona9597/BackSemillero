@@ -30,7 +30,7 @@ namespace BackSemillero.Controllers
                 {
                     Code = ex.InnerException?.Message ?? "400",
                     Message = ex.Message,
-                    Data = (object?)null
+                    Data = Empty
                 });
             }
         }

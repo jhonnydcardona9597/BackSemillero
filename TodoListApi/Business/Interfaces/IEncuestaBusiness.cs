@@ -6,6 +6,6 @@ namespace BackSemillero.Business.Interfaces
 {
     public interface IEncuestaBusiness
     {
-        Task<IEnumerable<EncuestaModelResponse>> ObtenerEncuestas(DashboardRequest filtros);
+        Task<List<EncuestaModelResponse>> ObtenerEncuestas(DashboardRequest filtros);
     }
 }

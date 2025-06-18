@@ -7,7 +7,7 @@ namespace BackSemillero.Business.Interfaces
 {
     public interface ISupervisorBusiness
     {
-        Task<IEnumerable<SupervisorDetalleModelResponse>> ObtenerDetalleEncuestas(DateTime? fecha);
-        Task<IEnumerable<SupervisorModelResponse>> ObtenerHistorialEncuestas();
+        Task<List<SupervisorDetalleModelResponse>> ObtenerDetalleEncuestas(DateTime? fecha);
+        Task<List<SupervisorModelResponse>> ObtenerHistorialEncuestas();
     }
 }

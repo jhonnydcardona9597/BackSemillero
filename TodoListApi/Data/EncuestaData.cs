@@ -21,7 +21,7 @@ namespace BackSemillero.Data
             _clasificacionesCollection = database.GetCollection<ClasificacionModel>("Clasificación");
         }
 
-        public async Task<IEnumerable<EncuestaModelResponse>> ObtenerEncuestas(DateTime fechaBuscada)
+        public async Task<List<EncuestaModelResponse>> ObtenerEncuestas(DateTime fechaBuscada)
         {
             // 1) Normalizar fecha a medianoche
             DateTime inicio = fechaBuscada.Date;
@@ -48,7 +48,7 @@ namespace BackSemillero.Data
 
             var fechas = await pipeline.ToListAsync();
             if (!fechas.Any())
-                return Enumerable.Empty<EncuestaModelResponse>();
+                return new List<EncuestaModelResponse>();
 
             // 4) Traer encuestas de esa fecha anterior
             var fechaAnt = fechas[0].Fecha;
@@ -68,6 +68,13 @@ namespace BackSemillero.Data
             return await _clasificacionesCollection
                          .Find(c => c.Id == idClasificacion)
                          .FirstOrDefaultAsync();
+        }
+        public async Task<List<EncuestaModelResponse>> ObtenerTodasLasEncuestas()
+        {
+            return await _encuestasCollection
+                .Find(FilterDefinition<EncuestaModelResponse>.Empty)
+                .SortByDescending(e => e.HoraYFechaDeCreacion)
+                .ToListAsync();
         }
     }
 }

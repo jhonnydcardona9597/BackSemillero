@@ -17,7 +17,7 @@ namespace BackSemillero.Business
             _encuestaData = encuestaData;
         }
 
-        public async Task<IEnumerable<EncuestaModelResponse>> ObtenerEncuestas(DashboardRequest filtros)
+        public async Task<List<EncuestaModelResponse>> ObtenerEncuestas(DashboardRequest filtros)
         {
             // 1) Fecha objetivo: si viene filtros.Fecha, la usamos; si no, tomamos “hoy”
             DateTime fechaObjetivo = filtros.Fecha?.Date ?? DateTime.Now.Date;
