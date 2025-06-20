@@ -117,5 +117,42 @@ namespace BackSemillero.Business
             //    EstadoEnvio = e.EstadoEnvio
             //});
         }
+
+        public async Task<List<ObservacionesMejoraModel>> ObservacionMejoraProfesor()
+        {
+            var EncuestaGeneral = await _encuestaData.ObtenerEncuestas(new DateTime(2025, 6, 6));
+
+            if (EncuestaGeneral.Count() != 0)
+            {
+                var lista = new List<ObservacionesMejoraModel>();
+
+                foreach (var encuesta in EncuestaGeneral) 
+                {
+                    foreach (var detalle_profesor in encuesta.Detalle_Encuestas) 
+                    {
+                        foreach (var detalle_Estudiante in detalle_profesor.Estudiante)
+                        {
+                            lista.Add(new ObservacionesMejoraModel
+                            {
+                                NombreProfesor = detalle_profesor.IdDocente,
+                                ApellidoProfesor = detalle_profesor.IdDocente,
+                                Carrera = detalle_profesor.IdPrograma,
+                                Materia = detalle_profesor.IdAsignatura,
+                                CedulaEstudiante = detalle_Estudiante.Identificacion,
+                                NombreEstudiante = detalle_Estudiante.Identificacion,
+                                Observacion_Mejora = detalle_Estudiante.Conclusion,
+                            });
+                        }
+                    }
+                }
+
+                return lista;
+            }
+            else
+            {
+                throw new Exception("No existe informacion de observaciones de mejora", new Exception("404"));
+            }
+        }
+
     }
 }

@@ -9,5 +9,7 @@ namespace BackSemillero.Business.Interfaces
     {
         Task<List<SupervisorDetalleModelResponse>> ObtenerDetalleEncuestas(DateTime? fecha);
         Task<List<SupervisorModelResponse>> ObtenerHistorialEncuestas();
+        Task<List<ObservacionesMejoraModel>> ObservacionMejoraProfesor();
     }
+
 }

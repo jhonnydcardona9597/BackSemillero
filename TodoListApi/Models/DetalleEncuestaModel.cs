@@ -39,5 +39,9 @@ namespace BackSemillero.Models
 
         [BsonIgnore]
         public ClasificacionModel? Clasificacion { get; set; }
+
+        [BsonElement("Estudiante")]
+        public List<DetalleEstudianteModel> Estudiante { get; set; } = new();
+
     }
 }

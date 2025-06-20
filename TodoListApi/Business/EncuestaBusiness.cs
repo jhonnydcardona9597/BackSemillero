@@ -44,6 +44,7 @@ namespace BackSemillero.Business
                         (d.Clasificacion?.Puesto.ToString().Contains(tf) ?? false) ||
                         //(d.Clasificacion?.PuestoAnterior.ToString().Contains(tf) ?? false) ||
                         e.HoraYFechaDeCreacion.ToString("O").Contains(tf)
+                        
                     )
                 ).ToList();
             }

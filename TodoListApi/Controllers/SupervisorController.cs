@@ -68,5 +68,32 @@ namespace BackSemillero.Controllers
                 });
             }
         }
+
+        // GET /Supervisor/ObservacionesDeMejora
+        [HttpGet]
+        [Route("ObservacionesDeMejora")]
+        public async Task<IActionResult> ObservacionesProfesor()
+        {
+            try
+            {
+                var data = await _supervisorBusiness.ObservacionMejoraProfesor();
+                return Ok(new
+                {
+                    Code = 200,
+                    Message = string.Empty,
+                    Data = data
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new
+                {
+                    Code = ex.InnerException?.Message ?? "400",
+                    Message = ex.Message,
+                    Data = Empty
+                });
+            }
+        }
+
     }
 }

@@ -60,7 +60,9 @@ namespace BackSemillero.Data
                 bldr.Lt(e => e.HoraYFechaDeCreacion, fin)
             );
 
-            return await _encuestasCollection.Find(filtroAnt).ToListAsync();
+             
+            var pop = await _encuestasCollection.Find(filtroAnt).ToListAsync();
+            return new List<EncuestaModelResponse>();
         }
 
         public async Task<ClasificacionModel?> ObtenerClasificacion(ObjectId idClasificacion)
