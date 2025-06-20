@@ -120,7 +120,7 @@ namespace BackSemillero.Business
 
         public async Task<List<ObservacionesMejoraModel>> ObservacionMejoraProfesor()
         {
-            var EncuestaGeneral = await _encuestaData.ObtenerEncuestas(new DateTime(2025, 6, 6));
+            var EncuestaGeneral = await _encuestaData.ObtenerEncuestas(DateTime.Now.Date);
 
             if (EncuestaGeneral.Count() != 0)
             {
@@ -134,8 +134,7 @@ namespace BackSemillero.Business
                         {
                             lista.Add(new ObservacionesMejoraModel
                             {
-                                NombreProfesor = detalle_profesor.IdDocente,
-                                ApellidoProfesor = detalle_profesor.IdDocente,
+                                Profesor = detalle_profesor.IdDocente,
                                 Carrera = detalle_profesor.IdPrograma,
                                 Materia = detalle_profesor.IdAsignatura,
                                 CedulaEstudiante = detalle_Estudiante.Identificacion,

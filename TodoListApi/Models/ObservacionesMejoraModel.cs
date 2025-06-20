@@ -2,8 +2,7 @@
 {
     public class ObservacionesMejoraModel
     {
-        public string? NombreProfesor { get; set; }
-        public string? ApellidoProfesor { get; set; }
+        public string? Profesor { get; set; }
         public string? Carrera { get; set; }
         public string? Materia { get; set; }
         public string? CedulaEstudiante { get; set; }
